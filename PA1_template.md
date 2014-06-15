@@ -2,7 +2,8 @@
 
 
 ## Loading and preprocessing the data
-```{r}
+
+```r
 raw.data <- read.csv("activity.csv", colClasses = c("integer", "Date", "integer"))
 dates = unique(raw.data$date)
 intervals = unique(raw.data$interval)
@@ -10,7 +11,8 @@ intervals = unique(raw.data$interval)
 
 
 ## What is mean total number of steps taken per day?
-```{r}
+
+```r
 clean.date.sums <- as.integer()
 i <- 0
 for(i in 1:length(dates)){
@@ -21,21 +23,26 @@ clean.date.sums <- cbind.data.frame(dates,clean.date.sums)
 colnames(clean.date.sums) <- c("date","total")
 ```
 Histogram:
-```{r}
+
+```r
 hist(clean.date.sums$total)
 ```
 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
+
 Mean and Median:
-```{r}
+
+```r
 daily.mean = mean(clean.date.sums$total, na.rm = TRUE)
 daily.median = median(clean.date.sums$total, na.rm = TRUE)
 ```
-The mean is `r daily.mean` and the median is `r daily.median`
+The mean is 9354.2295 and the median is 10395
 
 ## What is the average daily activity pattern?
 
 Time Series:
-```{r}
+
+```r
 clean.interval.means <- as.numeric()
 i <- 0
 for(i in 1:length(intervals)){
@@ -48,17 +55,21 @@ max.interval <- clean.interval.means[which.max(clean.interval.means[,2])]
 plot(clean.interval.means, type = "l")
 ```
 
-The interval with the maximum number of steps is `r max.interval`
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+
+The interval with the maximum number of steps is 835
 
 ## Imputing missing values
-``` {r}
+
+```r
 total.na <- length(which(is.na(raw.data$steps)))
 ```
-The total number of NA's in the raw dataset is `r total.na` 
+The total number of NA's in the raw dataset is 2304 
 
 The missing values will be filled using the rounded interval mean for a missing data point. The new dataset is called simulated.data.
 
-``` {r}
+
+```r
 simulated.data <- raw.data
 observations <- length(simulated.data[,1])
 
@@ -74,7 +85,8 @@ for(i in 1:observations){
 
 Histogram:
 
-```{r}
+
+```r
 simulated.date.sums <- as.integer()
 i <- 0
 for(i in 1:length(dates)){
@@ -88,12 +100,15 @@ daily.median.simulated = median(simulated.date.sums$total, na.rm = TRUE)
 hist(simulated.date.sums$total)
 ```
 
-For the simulated dataset, the mean is `r round(daily.mean.simulated, digits=2)` and the median is `r daily.median.simulated`. By adding the simulated values the mean and median have drifted higher.
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
+
+For the simulated dataset, the mean is 1.0766 &times; 10<sup>4</sup> and the median is 10762. By adding the simulated values the mean and median have drifted higher.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 Weekend Data:
-```{r}
+
+```r
 i <- 0
 weekday.value <- as.character()
 for(i in 1:observations){
@@ -112,7 +127,8 @@ colnames(weekend.interval.means) <- c("interval", "mean")
 ```
 
 Workweek Data:
-```{r}
+
+```r
 simulated.data.mon <- subset(simulated.data, weekday.value == "Mon")
 simulated.data.tue <- subset(simulated.data, weekday.value == "Tue")
 simulated.data.wed <- subset(simulated.data, weekday.value == "Wed")
@@ -130,9 +146,40 @@ colnames(workweek.interval.means) <- c("interval", "mean")
 ```
 
 Panel Plot:
-```{r}
+
+```r
 library(fields)
+```
+
+```
+## Loading required package: spam
+## Loading required package: grid
+## Spam version 0.41-0 (2014-02-26) is loaded.
+## Type 'help( Spam)' or 'demo( spam)' for a short introduction 
+## and overview of this package.
+## Help for individual functions is also obtained by adding the
+## suffix '.spam' to the function name, e.g. 'help( chol.spam)'.
+## 
+## Attaching package: 'spam'
+## 
+## The following objects are masked from 'package:base':
+## 
+##     backsolve, forwardsolve
+## 
+## Loading required package: maps
+```
+
+```r
 set.panel(2,1)
+```
+
+```
+## plot window will lay out plots in a 2 by 1 matrix
+```
+
+```r
 plot(weekend.interval.means, type = "l")
 plot(workweek.interval.means, type = "l")
 ```
+
+![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11.png) 
